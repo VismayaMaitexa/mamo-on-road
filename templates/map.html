@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Map Example</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+        .search-box {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Map</h1>
+    <div class="container">
+        <div class="search-box">
+            <input type="text" id="location-search" class="form-control" placeholder="Search for a location">
+            <button class="btn btn-primary mt-2" onclick="searchLocation()">Search</button>
+            <button class="btn btn-success mt-2" onclick="getLiveLocation()">Show My Location</button>
+        </div>
+        <div id="map"></div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([51.505, -0.09], 13);
+    
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+    
+        const marker = L.marker([51.505, -0.09]).addTo(map)
+            .bindPopup('Your location')
+            .openPopup();
+    
+        // Function to search for a location using Nominatim
+        function searchLocation() {
+            const query = document.getElementById('location-search').value;
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const lat = parseFloat(data[0].lat);
+                        const lon = parseFloat(data[0].lon);
+                        map.setView([lat, lon], 13);
+                        marker.setLatLng([lat, lon])
+                            .bindPopup(`Search result: ${data[0].display_name}`)
+                            .openPopup();
+
+                        // Fetch nearby places
+                        fetchNearbyPlaces(lat, lon);
+                    } else {
+                        alert('Location not found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Function to get live location
+        function getLiveLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    
+                    // Update map with live location
+                    map.setView([lat, lon], 13);
+                    
+                    // Move the marker to the live location
+                    marker.setLatLng([lat, lon])
+                        .bindPopup('You are here!')
+                        .openPopup();
+                    
+                    // Optionally, you can add a circle around the marker to indicate accuracy
+                    L.circle([lat, lon], {
+                        color: 'blue',
+                        fillColor: '#30f',
+                        fillOpacity: 0.3,
+                        radius: position.coords.accuracy // accuracy in meters
+                    }).addTo(map);
+                }, function(error) {
+                    console.error('Error getting location:', error);
+                    alert('Unable to retrieve your location');
+                });
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+
+        // Example coordinates list and threshold
+        const coordinatesList = [
+            { lat: 51.5074, lon: -0.1278 }, // London
+            { lat: 51.5155, lon: -0.1321 }, // Nearby location in London
+            { lat: 51.5200, lon: -0.1400 }, // Another nearby location
+            { lat: 51.4048, lon: -0.0053 }, // Farther location
+            { lat: 51.5033, lon: -0.1196 }, // Close to central location
+            { lat: 11.4083, lon: 75.9203 }, // Thamarassery
+            { lat: 11.4325, lon: 75.8705 }, // Kattippara
+            { lat: 11.4121, lon: 75.9028 }, // Chamal
+            { lat: 11.2684, lon: 75.8795 }, // Omassery
+            { lat: 11.3667, lon: 75.8700 }  // Thamarassery Churam
+        ];
+
+        const centralLat = 11.4083;
+        const centralLon = 75.9203;
+        const thresholdDistance = 20000; // 2000 meters
+
+        // Function to calculate the distance between two coordinates
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Earth's radius in meters
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            return R * c; // Distance in meters
+        }
+
+        // Function to find and display nearby coordinates
+        function showNearbyCoordinates() {
+            coordinatesList.forEach(coord => {
+                const distance = calculateDistance(centralLat, centralLon, coord.lat, coord.lon);
+                if (distance <= thresholdDistance) {
+                    L.marker([coord.lat, coord.lon])
+                        .addTo(map)
+                        .bindPopup(`Nearby location: ${coord.lat}, ${coord.lon}<br>Distance: ${Math.round(distance)} meters`);
+                }
+            });
+        }
+
+        // Show nearby coordinates on map load
+        showNearbyCoordinates();
+    </script>
+</body>
+</html>

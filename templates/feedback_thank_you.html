@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You for Your Feedback</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('../static/images/vehicle-assistance.jpg');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            text-align: center;
+        }
+
+        /* Container for the content */
+        .thank-you-container {
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+            padding: 40px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        /* Header styles */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        /* Paragraph styles */
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        /* Link to return home */
+        a {
+            text-decoration: none;
+            font-size: 1.2rem;
+            color: #4f46e5;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="thank-you-container">
+        <h1>Thank You for Your Feedback!</h1>
+        <p>Your feedback has been successfully submitted. We appreciate your input!</p>
+        <a href="{% url 'userdashboard' %}">Go back to Home</a>
+    </div>
+</body>
+</html>

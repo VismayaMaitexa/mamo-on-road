@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - On Road Vehicle Assistance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #e0e7ff;
+            background-image: url("../static/images/vehicle-assistance.jpg"); 
+            background-size: cover;
+            background-position: center;
+        }
+
+        .sidebar {
+            width: 210px;
+            background: #1f2937; 
+            color: #f3f4f6; 
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: normal;
+            color: #f3f4f6;
+        }
+
+        .sidebar a {
+            color: #f3f4f6; 
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: background 0.3s, padding-left 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #4f46e5; 
+            padding-left: 20px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        .content {
+            margin-left: 230px;
+            padding: 20px;
+            width: calc(100% - 230px);
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .content h1 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .request-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .request-card {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 15px;
+            text-align: left;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .request-card h3 {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .request-card p {
+            font-size: 14px;
+            color: #555;
+            margin: 5px 0;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .status-accepted {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .status-rejected {
+            background-color: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Vehicle Assistance Admin</h2>
+        <a href="{% url 'emergency_requests' %}"><i class="fas fa-exclamation-triangle"></i> Emergency Requests</a>
+        <a href="{% url 'admindashboard_mechanics' %}"><i class="fas fa-tools"></i> Mechanics</a>
+        <a href="{% url 'admin_feedback' %}"><i class="fas fa-comment-alt"></i> Feedback</a>
+        <a href="{% url 'user' %}"><i class="fas fa-user"></i> User</a>
+        <a href="{% url 'index' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="content">
+        <h1>Emergency Requests</h1>
+
+        <div class="request-container">
+            {% if requests %}
+                {% for request in requests %}
+                    <div class="request-card">
+                        <div>
+                            <h3>Request from {{ request.user.username }} ({{ request.user.first_name }} {{ request.user.last_name }})</h3>
+                            <p><strong>Mechanic:</strong> {{ request.mechanic.user.first_name }} {{ request.mechanic.user.last_name }}</p>
+                            <p><strong>Status:</strong>
+                                <span class="status 
+                                    {% if request.status == 'Pending' %}status-pending{% endif %}
+                                    {% if request.status == 'Accepted' %}status-accepted{% endif %}
+                                    {% if request.status == 'Rejected' %}status-rejected{% endif %}">{{ request.status }}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p><strong>Place of Request:</strong> {{ request.place }}</p>
+                            <p><strong>Issue:</strong> {{ request.issue }}</p>
+                            <p><strong>Vehicle Type:</strong> {{ request.vehicle_type }}</p>
+                            <p><strong>Contact Number:</strong> {{ request.contact_number }}</p>
+                            <p><strong>Date and Time Requested:</strong> {{ request.date_requested }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-data">No emergency requests available.</div>
+            {% endif %}
+        </div>
+        
+    </div>
+</body>
+</html>

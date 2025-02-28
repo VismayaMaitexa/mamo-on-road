@@ -1,0 +1,208 @@
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Submit Feedback</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #e0e7ff;
+            background-image: url("../static/images/vehicle-assistance.jpg");
+            background-size: cover;
+            background-position: center;
+            color: #333;
+        }
+        /* Sidebar Styling */
+        .sidebar {
+            width: 210px;
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: normal;
+            color: #f3f4f6;
+        }
+
+        .sidebar a {
+            color: #f3f4f6;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: background 0.3s, padding-left 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #4f46e5;
+            padding-left: 20px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        /* Content Area Styling */
+        .content {
+            margin-left: 230px;
+            padding: 40px;
+            width: calc(100% - 230px);
+            background: rgba(255, 255, 255, 0.85); /* Semi-transparent white background */
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+            max-width: 900px;
+            margin-top: 50px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Form Header */
+        h1 {
+            font-size: 32px;
+            color: #1f2937;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        form button {
+            padding: 12px 24px;
+            background-color: #4f46e5;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #3b36d1;
+            transform: translateY(-2px); /* Subtle hover effect */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Form Input Styling */
+        form input,
+        form select,
+        form textarea {
+            padding: 16px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        form input:focus,
+        form select:focus,
+        form textarea:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 12px rgba(79, 70, 229, 0.3); /* Focus glow effect */
+            outline: none;
+        }
+
+        form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Smooth Focus Transition */
+        form input,
+        form select,
+        form textarea {
+            border-radius: 8px;
+            background-color: #f9fafb;
+        }
+
+        form input:focus,
+        form select:focus,
+        form textarea:focus {
+            background-color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 180px;
+                width: calc(100% - 180px);
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>User Dashboard</h2>
+        <a href="{% url 'userdashboard_mechanics' %}"><i class="fas fa-wrench"></i> Mechanics</a>
+        <a href="{% url 'my_requests' %}"><i class="fas fa-tasks"></i> My Requests</a>
+        <a href="{% url 'user_feedback' %}"><i class="fas fa-comment-alt"></i> Give Feedback</a>
+        <a href="{% url 'user_profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
+        <a href="{% url 'index' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        <h1>Submit Feedback for On-Road Vehicle Assistance</h1>
+    
+        <!-- Feedback Form -->
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+    
+            <!-- Render mechanic field manually -->
+            <label for="mechanic">Select Mechanic:</label>
+            <select name="mechanic" id="mechanic" required>
+                <option value="" disabled selected>Select Mechanic</option>
+                {% for mechanic in form.mechanic.field.queryset %}
+                    <option value="{{ mechanic.id }}">{{ mechanic.user.username }}</option>
+                {% empty %}
+                    <option value="" disabled>No mechanics available</option>
+                {% endfor %}
+            </select>
+    <!-- Debugging: Print the queryset in the template -->
+
+
+            <!-- Render feedback text field manually -->
+            <label for="feedback_text">Feedback:</label>
+            {{ form.feedback_text }}
+    
+            <!-- Render rating field manually -->
+            <label for="rating">Rating (1 to 5):</label>
+            {{ form.rating }}
+    
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+        
+</body>
+</html>

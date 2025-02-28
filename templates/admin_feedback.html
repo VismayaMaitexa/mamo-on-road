@@ -1,0 +1,185 @@
+
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Feedback List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #e0e7ff; 
+            background-image: url("../static/images/vehicle-assistance.jpg"); 
+            background-size: cover;
+            background-position: center;
+            color: #333;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 210px;
+            background: #1f2937; 
+            color: #f3f4f6; 
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: normal;
+            color: #f3f4f6;
+        }
+
+        .sidebar a {
+            color: #f3f4f6; 
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: background 0.3s, padding-left 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #4f46e5; 
+            padding-left: 20px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        /* Content Area Styling */
+        .content {
+            margin-left: 230px;
+            padding: 20px;
+            width: calc(100% - 230px);
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        /* Header */
+        .content h1 {
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4f46e5;
+            color: #ffffff;
+        }
+
+        table tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        table td a.btn {
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #2563eb;
+            color: #ffffff;
+            transition: background 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-danger {
+            background-color: #dc2626;
+            color: #ffffff;
+            transition: background 0.3s;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Vehicle Assistance Admin</h2>
+        <a href="{% url 'emergency_requests' %}"><i class="fas fa-exclamation-triangle"></i> Emergency Requests</a>
+        <a href="{% url 'admindashboard_mechanics' %}"><i class="fas fa-tools"></i> Mechanics</a>
+        <a href="{% url 'admin_feedback' %}"><i class="fas fa-comment-alt"></i> Feedback</a>
+        <a href="{% url 'user' %}"><i class="fas fa-user"></i> User</a>
+        <a href="{% url 'index' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1>Feedback on On-Road Vehicle Assistance</h1>
+        
+        <!-- Feedback Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Rating</th>
+                    <th>Message</th>
+                    <th>Created At</th>
+                    <th>Mechanic</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for feedback in feedbacks %}
+                <tr>
+                    <td>{{ feedback.user.username }}</td>
+                    <td>{{ feedback.rating }}</td>
+                    <td>{{ feedback.feedback_text }}</td>
+                    <td>{{ feedback.created_at }}</td>
+                    <td>
+                        {% if feedback.mechanic %}
+                            {{ feedback.mechanic.user.username }}  <!-- Display mechanic's username -->
+                        {% else %}
+                            No Mechanic Assigned
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+</body>
+</html>

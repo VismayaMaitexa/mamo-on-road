@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - On Road Vehicle Assistance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #e0e7ff; 
+            background-image: url("../static/images/mechanicbg.jpeg"); 
+            background-size: cover;
+            background-position: center;
+        }
+        .sidebar {
+            width: 210px;
+            background: #606b7a; 
+            color: #f3f4f6; 
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .moving-text {
+            background: #10b981; 
+            color: white;
+            padding: 10px;
+            position: absolute;
+            top: 10px;
+            white-space: nowrap;
+            animation: move 10s linear infinite;
+        }
+        @keyframes move {
+            from { left: 100%; }
+            to { left: -70%; }
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: normal;
+            color: #f3f4f6;
+        }
+        .sidebar a {
+            color: #f3f4f6; 
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: background 0.3s, padding-left 0.3s;
+        }
+        .sidebar a:hover {
+            background: #221f63; 
+            padding-left: 20px;
+        }
+        .sidebar a i {
+            margin-right: 10px;
+        }
+        .main {
+            margin-left: 260px;
+            padding: 20px;
+            flex-grow: 1;
+            transition: margin-left 0.3s;
+        }
+        .header {
+            background: #616e81; 
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+            margin-left: 15px;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+            color: #1f2937; 
+        }
+        .card p {
+            color: #979eac; 
+        }
+        .card .stats {
+            display: flex;
+            justify-content: space-between;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100px;
+            }
+            .main {
+                margin-left: 210px;
+            }
+        }
+    </style>
+    
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Vehicle Assistance Admin</h2>
+    <a href="{% url 'emergency_requests' %}"><i class="fas fa-exclamation-triangle"></i> Emergency Requests</a>
+    <a href="{% url 'admindashboard_mechanics' %}"><i class="fas fa-tools"></i> Mechanics</a>
+    <a href="{% url 'admin_feedback' %}"><i class="fas fa-comment-alt"></i> Feedback</a>
+    <a href="{% url 'user' %}"><i class="fas fa-user"></i> User</a>
+    <a href="{% url 'index' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>
+
+<div class="main">
+    <div class="header">
+        <h1>Dashboard</h1>
+        <div>
+            <span>Welcome, Admin</span>
+            <img src="https://via.placeholder.com/40" alt="Profile Picture" class="profile-pic">
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Emergency Request Overview -->
+        <div class="card">
+            <h2>Emergency Request Overview</h2>
+            <div class="stats">
+                <div>
+                    <strong>120</strong> Active Requests
+                </div>
+                <div>
+                    <strong>35</strong> Resolved Today
+                </div>
+            </div>
+            <p>Monitor the status of emergency vehicle assistance requests in real-time.</p>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+            <h2>Recent Activity</h2>
+            <p>Details about recent emergency request completions, mechanic assignments, and vehicle repairs.</p>
+        </div>
+
+        <!-- Vehicle Assistance Stats -->
+        <div class="card">
+            <h2>Vehicle Assistance Status</h2>
+            <p>Track vehicle service data, mechanic assignments, and feedback from users.</p>
+            <div class="moving-text">🚗 On Road Assistance: New Mechanic Teams Available for Service!</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

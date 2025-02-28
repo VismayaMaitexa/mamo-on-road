@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Mechanics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Global Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #312a29; /* Dark Brown Background */
+            background-image: url("../static/images/vehicle-assistance.jpg"); 
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* Sidebar Styling */
+        .sidebar {
+            width: 210px;
+            background: #4E342E; /* Dark Brown Sidebar */
+            color: #f3f4f6; /* White text */
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: normal;
+            color: #f3f4f6;
+        }
+    
+        .sidebar a {
+            color: #f3f4f6; 
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: background 0.3s, padding-left 0.3s;
+        }
+    
+        .sidebar a:hover {
+            background: #6D4C41; /* Lighter Brown on Hover */
+            padding-left: 20px;
+        }
+    
+        .sidebar a i {
+            margin-right: 10px;
+        }
+    
+        /* Content Area */
+        .content {
+            margin-left: 230px;
+            padding: 20px;
+            width: calc(100% - 230px);
+            background: rgba(112, 60, 60, 0.9); /* Light beige with transparency */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+    
+        .content h1 {
+            color: #ffffff; /* Dark Brown Heading */
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    
+        /* Card Layout for Mechanic Profiles */
+        .profile-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+    
+        .profile-card {
+            background: rgba(255, 255, 255, 0.8); /* Transparent white background */
+            border-radius: 10px;
+            width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            padding: 15px;
+            text-align: center;
+        }
+    
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+    
+        .profile-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+    
+        .profile-card h3 {
+            font-size: 20px;
+            color: #4E342E; /* Dark Brown for Names */
+            margin-bottom: 10px;
+        }
+    
+        .profile-card p {
+            font-size: 14px;
+            color: #6D4C41; /* Lighter Brown for Paragraphs */
+            margin: 5px 0;
+        }
+    
+        .profile-card .btn-view {
+            display: inline-block;
+            background-color: #6D4C41; /* Lighter Brown for Button */
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+    
+        .profile-card .btn-view:hover {
+            background-color: #4E342E; /* Darker Brown on Hover */
+        }
+    
+        /* No Data Styling */
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #4E342E; /* Dark Brown Text */
+        }
+    
+        /* Search Form Styling */
+        .search-form {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+    
+        .search-form input {
+            padding: 10px;
+            width: 150px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    
+        .search-form button {
+            padding: 10px;
+            background-color: #6D4C41; /* Lighter Brown for Button */
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+    
+        .search-form button:hover {
+            background-color: #4E342E; /* Darker Brown on Hover */
+        }
+    </style>
+    
+</head>
+<body>    
+    <div class="sidebar">
+        <h2>Vehicle Assistance </h2>
+        <a href="{% url 'userdashboard_mechanics' %}"><i class="fas fa-wrench"></i> Mechanics</a>
+        <a href="{% url 'my_requests' %}"><i class="fas fa-tasks"></i> My Requests</a>
+        <a href="{% url 'user_feedback' %}"><i class="fas fa-comment-alt"></i> Give Feedback</a>
+        <a href="{% url 'user_profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
+        <a href="{% url 'index' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="content">
+        <h1>Mechanic Profiles</h1>
+
+        <!-- Search Form -->
+        <div class="search-form">
+            <form action="{% url 'userdashboard_mechanics' %}" method="POST">
+                {% csrf_token %}
+                <div>
+                    <input type="text" id="latitude" name="lat" placeholder="Latitude" required>
+                    <input type="text" id="longitude" name="long" placeholder="Longitude" required>
+                </div>
+                <button type="button" onclick="getLocation()">Get My Location</button>
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <div class="profile-container">
+            {% if mechanics %}
+                {% for mechanic in mechanics %}
+                    <div class="profile-card">
+                        {% if mechanic.profile_pic %}
+                            <img src="{{ mechanic.profile_pic.url }}" alt="Profile Picture">
+                        {% else %}
+                            <img src="https://via.placeholder.com/100" alt="Default Profile Picture">
+                        {% endif %}
+                        <h3>{{ mechanic.user.first_name }} {{ mechanic.user.last_name }}</h3>
+                        <p><strong>Username:</strong> {{ mechanic.user.username }}</p>
+                        <p><strong>Address:</strong> {{ mechanic.address }}</p>
+                        <p><strong>Mobile:</strong> {{ mechanic.mobile }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-data">No mechanic data available</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Function to get the user's current location and update the input fields
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Update the latitude and longitude input fields
+                    document.getElementById('latitude').value = position.coords.latitude;
+                    document.getElementById('longitude').value = position.coords.longitude;
+                }, function() {
+                    alert("Unable to retrieve your location.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+</body>
+</html>

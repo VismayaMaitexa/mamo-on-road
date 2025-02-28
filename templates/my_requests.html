@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Mechanics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #e0e7ff;
+            background-image: url("../static/images/vehicle-assistance.jpg"); 
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* Sidebar Styling */
+        .sidebar {
+            width: 210px;
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: normal;
+            color: #f3f4f6;
+        }
+
+        .sidebar a {
+            color: #f3f4f6; 
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: background 0.3s, padding-left 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #4f46e5; 
+            padding-left: 20px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        /* Content Area */
+        .content {
+            margin-left: 230px;
+            padding: 20px;
+            width: calc(100% - 230px);
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .content h1 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Card Layout for Mechanic Profiles */
+        .profile-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .profile-card {
+            background: #ffffff;
+            border-radius: 10px;
+            width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .profile-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .profile-card h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .profile-card p {
+            font-size: 14px;
+            color: #555;
+            margin: 5px 0;
+        }
+
+        .profile-card .btn-view,
+        .profile-card .btn-request {
+            display: inline-block;
+            background-color: #4f46e5;
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .profile-card .btn-view:hover,
+        .profile-card .btn-request:hover {
+            background-color: #3b41e0;
+        }
+
+        /* No Data Styling */
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        /* Status Label */
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .status-accepted {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .status-rejected {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        /* Request Already Sent Styling */
+        .request-alert {
+            color: #e74c3c;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Disabled Button */
+        .btn-disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>    
+    <div class="sidebar">
+        <h2>Vehicle Assistance User</h2>
+        <a href="{% url 'userdashboard_mechanics' %}"><i class="fas fa-wrench"></i> Mechanics</a>
+        <a href="{% url 'my_requests' %}"><i class="fas fa-tasks"></i> My Requests</a>
+        <a href="{% url 'user_feedback' %}"><i class="fas fa-comment-alt"></i> Give Feedback</a>
+        <a href="{% url 'user_profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
+        <a href="{% url 'index' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="content">
+        <h1>Mechanic Profiles</h1>
+
+        <div class="profile-container">
+            {% if mechanics %}
+                {% for mechanic in mechanics %}
+                    <div class="profile-card">
+                        {% if mechanic.profile_pic %}
+                            <img src="{{ mechanic.profile_pic.url }}" alt="Profile Picture">
+                        {% else %}
+                            <img src="https://via.placeholder.com/100" alt="Default Profile Picture">
+                        {% endif %}
+                        <h3>{{ mechanic.user.first_name }} {{ mechanic.user.last_name }}</h3>
+                        <p><strong>Username:</strong> {{ mechanic.user.username }}</p>
+                        <p><strong>Address:</strong> {{ mechanic.address }}</p>
+                        <p><strong>Mobile:</strong> {{ mechanic.mobile }}</p>
+        
+                        <!-- Show the status of the user's request (if any) -->
+                        {% if mechanic.user_request_status %}
+                            <div class="status 
+                                {% if mechanic.user_request_status == 'Pending' %}status-pending{% endif %}
+                                {% if mechanic.user_request_status == 'Accepted' %}status-accepted{% endif %}
+                                {% if mechanic.user_request_status == 'Rejected' %}status-rejected{% endif %}">
+                                {{ mechanic.user_request_status }}
+                            </div>
+                        {% endif %}
+        
+                        <!-- Disable Request Button if Request Exists for the Logged-in User -->
+                        {% if mechanic.request_exists %}
+                            <div class="request-alert">You have already requested this mechanic.</div>
+                            <a href="#" class="btn-request btn-disabled" aria-disabled="true">Request (Already Requested)</a>
+                        {% else %}
+                            <a href="{% url 'make_request' mechanic.id %}" class="btn-request">Request</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-data">No mechanic data available</div>
+            {% endif %}
+        </div>        
+    </div>
+</body>
+</html>
